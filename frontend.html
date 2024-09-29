@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps Marker Example</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+    <script>
+        // Function to load the Google Maps API key and script
+        async function loadGoogleMapsApi() {
+            try {
+                const response = await fetch('http://localhost:3000/api/google-maps-key');
+                const data = await response.json();
+                const googleMapsScript = document.createElement('script');
+                googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}`;
+                googleMapsScript.async = true;
+                googleMapsScript.onload = fetchVehicleData; // Call fetchVehicleData once the script loads
+                document.head.appendChild(googleMapsScript);
+            } catch (error) {
+                console.error('Error loading Google Maps API key:', error);
+            }
+        }
+
+        // Function to fetch vehicle data from your backend API
+        async function fetchVehicleData() {
+            try {
+                // Fetch vehicle data from your Node.js API
+                const response = await fetch('http://localhost:3000/api/vehicle');
+                const data = await response.json(); // Parse the JSON response
+
+                const lat = data.latitude; // Extract latitude from the response
+                const lon = data.longitude; // Extract longitude from the response
+
+                // Initialize the map once the vehicle location is fetched
+                initMap(lat, lon);
+            } catch (error) {
+                console.error('Error fetching vehicle data:', error);
+            }
+        }
+
+        // Function to initialize the Google Map with dynamic coordinates
+        function initMap(lat, lon) {
+            const mapLocation = { lat: lat, lng: lon }; // Set location based on API response
+            const map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15, // Set zoom level
+                center: mapLocation, // Center the map at the fetched location
+            });
+
+            const customIcon = {
+                url: 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="red" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpath d="M3 11h18l1 5H2l1-5z"/%3E%3Cpath d="M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"/%3E%3Ccircle cx="7" cy="17" r="2"/%3E%3Ccircle cx="17" cy="17" r="2"/%3E%3C/svg%3E',
+                scaledSize: new google.maps.Size(26, 26), // Adjust as needed
+            };
+
+            // Create a marker at the fetched location
+            const marker = new google.maps.Marker({
+                position: mapLocation, // Position the marker at the fetched location
+                map: map, // Attach the marker to the map
+                icon: customIcon,
+            });
+
+            // Store map and marker for later updates
+            window.map = map;
+            window.marker = marker;
+
+            // Start fetching vehicle data periodically every 15 minutes
+            setInterval(fetchVehicleData, 5 * 60 * 1000); // Fetch data every 5 minutes
+        }
+
+        // Load Google Maps API key and start fetching vehicle data on page load
+        window.onload = loadGoogleMapsApi;
+    </script>
+</head>
+<body>
+    <h1>Google Maps Marker Example</h1>
+    <div id="map"></div>
+</body>
+</html>
