@@ -27,6 +27,10 @@ A simple Node.js application that integrates Google Maps to display vehicle loca
 - Axios
 - Google Maps JavaScript API
 - dotenv for environment variables
+- Bouncie API: Used to fetch real-time vehicle data.
+
+About the Bouncie API
+This project utilizes the Bouncie API to retrieve vehicle location data. You will need an active account and proper API access to use this feature.
 
 ## Installation
 
