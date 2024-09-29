@@ -56,6 +56,8 @@ A Node.js application that integrates the Bouncie.app vehicle tracking service t
 
 2. Open your browser and navigate to `http://localhost:3000/api/vehicle` to see the vehicle location parameters.
 
+3. Open the index.html file in your browser to visualize the Google Map with the vehicle locations fetched from the Bouncie.app API.
+
 ## API Endpoints
 
 - GET /api/vehicle: Fetches the current vehicle location from the Bouncie.app backend API.
